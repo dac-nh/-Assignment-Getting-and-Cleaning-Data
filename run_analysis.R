@@ -36,7 +36,7 @@ x_mean_std <- x[,mean_std_set]
 # Uses descriptive activity names to name the activities in the data set
 act_label <- read.table("UCI HAR Dataset\\activity_labels.txt")
 act_label[,2] <- gsub("_"," ",act_label[,2])
-y[,1] <- merge(y, act_label, by = "V1")[,2]
+y[,1] <- act_label[y[,1], 2]
 
 
 # Appropriately labels the data set with descriptive variable names.
@@ -51,7 +51,7 @@ if (!"reshape2" %in% installed.packages()) {
   install.packages("reshape2")
 }
 library("reshape2")
-baseData <- melt(dataset,(id.vars=c("subject","activity")))
+baseData <- melt(dataset,(id=c("subject","activity")))
 secondDataset <- dcast(baseData, subject + activity ~ variable, mean)
 names(secondDataset)[-c(1:2)] <- paste("[Mean]" , names(secondDataset)[-c(1:2)] )
-write.table(secondDataset, "tidy_data.txt", sep = ",")
+write.table(secondDataset, "tidy_data.txt", row.names = FALSE)
